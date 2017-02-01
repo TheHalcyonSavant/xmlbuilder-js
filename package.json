@@ -1,5 +1,5 @@
 {
-  "name": "xmlbuilder-js",
+  "name": "xmlbuilder",
   "version": "8.2.2",
   "keywords": [
     "xml",
@@ -28,7 +28,7 @@
     "coveralls": "*"
   },
   "scripts": {
-    "install": "./node_modules/.bin/coffee -co ./node_modules/xmlbuilder-js/lib ./node_modules/xmlbuilder-js/src",
+    "install": "./node_modules/.bin/coffee -co lib src",
     "postpublish": "rm -rf lib",
     "test": "mocha && istanbul report text lcov"
   }
