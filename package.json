@@ -28,7 +28,7 @@
     "coveralls": "*"
   },
   "scripts": {
-    "postinstall": "coffee -co lib src",
+    "prepublish": "coffee -co lib src",
     "postpublish": "rm -rf lib",
     "test": "mocha && istanbul report text lcov"
   }
