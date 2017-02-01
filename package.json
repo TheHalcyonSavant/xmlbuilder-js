@@ -20,8 +20,7 @@
   "engines": {
     "node": ">=4.0"
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "coffee-script": "*",
     "mocha": "*",
     "coffee-coverage": "*",
