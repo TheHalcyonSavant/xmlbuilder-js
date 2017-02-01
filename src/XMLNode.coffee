@@ -35,13 +35,30 @@ module.exports = class XMLNode
       XMLText = require './XMLText'
       XMLProcessingInstruction = require './XMLProcessingInstruction'
 
+  # Get type from value.
+  # 
+  # `val` value of any type
+  getComplexType: (val) ->
+    nodeType = typeof val
+
+    if val == null
+      nodeType = 'null'
+    else if Array.isArray(val)
+      nodeType = 'array'
+      if val.length == 0
+        nodeType = 'empty array'
+    else if (Object.keys(val).length == 0) and (val.constructor == Object)
+      nodeType = 'empty object'
+
+    return nodeType
+
 
   # Creates a child element node
   #
   # `name` node name or an object describing the XML tree
   # `attributes` an object containing name/value pairs of attributes
   # `text` element text
-  element: (name, attributes, text) ->
+  element: (name, attributes, text, level) ->
     lastChild = null
 
     attributes ?= {}
@@ -53,7 +70,9 @@ module.exports = class XMLNode
     name = name.valueOf() if name?
     # expand if array
     if Array.isArray name
-      lastChild = @element item for item in name
+      for item in name
+        console.log 'unkown execution'
+        lastChild = @element item
 
     # evaluate if function
     else if isFunction name
@@ -64,6 +83,7 @@ module.exports = class XMLNode
       for own key, val of name
         # evaluate if function
         val = val.apply() if isFunction val
+
 
         # skip empty or null objects and arrays
         val = null if (isObject val) and (isEmpty val)
@@ -77,16 +97,29 @@ module.exports = class XMLNode
           for item in val
             childNode = {}
             childNode[key] = item
-            lastChild = @element childNode
+            arrayLevel = (level || 0) + 1
+            lastChild = @element childNode, undefined, undefined, arrayLevel
+            if n2 != 'array'
+              lastChild.nodeType = n2
+              lastChild.depth = arrayLevel
+              # console.log(key + ':', '"' + (item || '').toString() + '"', '-', n2, arrayLevel);
 
         # expand child nodes under parent
         else if isObject val
+          objLevel = (level || 0) + 1
           lastChild = @element key
-          lastChild.element val
+          lastChild.element val, undefined, undefined, objLevel
+          lastChild.depth = objLevel
 
         # text node
         else
           lastChild = @element key, val
+
+        vDebug = '';
+        if n != 'array' and n != 'object'
+          vDebug = name[key]
+          lastChild.nodeType = n;
+        # console.log(key + ':', vDebug, '-', n, level || '');
 
     else
       # text node
