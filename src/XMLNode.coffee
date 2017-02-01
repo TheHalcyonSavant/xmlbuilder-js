@@ -84,6 +84,7 @@ module.exports = class XMLNode
         # evaluate if function
         val = val.apply() if isFunction val
 
+        n = @getComplexType val
 
         # skip empty or null objects and arrays
         val = null if (isObject val) and (isEmpty val)
@@ -97,6 +98,7 @@ module.exports = class XMLNode
           for item in val
             childNode = {}
             childNode[key] = item
+            n2 = @getComplexType item
             arrayLevel = (level || 0) + 1
             lastChild = @element childNode, undefined, undefined, arrayLevel
             if n2 != 'array'
